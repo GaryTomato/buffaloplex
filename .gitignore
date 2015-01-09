@@ -1,29 +1,18 @@
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+# Linkstation firmware
+ls_series-*.zip
+hddrootfs.img
+hddrootfs.buffalo.updated
 
-# Precompiled Headers
-*.gch
-*.pch
+# Unzipped firmware
+resources/ls_series-*
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+# Sources
+src/*
+old-src/*
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+#Temporary folder
+tmp-compile/*
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+#Archives
+resources/archive/*
+

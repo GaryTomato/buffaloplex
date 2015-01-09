@@ -23,12 +23,12 @@ rm -f $RESOURCES/hddrootfs.buffalo.updated
 echo "  Update firmware revision"
 DAT="`date "+%Y/%m/%d %H:%M:%S"`"
 sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1/" $SRC/etc/linkstation_release
-sed -i "s/^SUBVERSION=.*\$/SUBVERSION=$2/" $SRC/etc/linkstation_release
+sed -i "s/^SUBVERSION=.*\$/SUBVERSION=HDD $2/" $SRC/etc/linkstation_release
 sed -i "s,^BUILDDATE=.*\$,BUILDDATE=$DAT," $SRC/etc/linkstation_release
-sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
-sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
-sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
-sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
+#sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
+#sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
+#sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
+#sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
 
 echo "  Compressing hddrootfs.buffalo.updated"
 tar -C $SRC -czf $RESOURCES/hddrootfs.buffalo.updated .
@@ -49,7 +49,7 @@ unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/uimage$VERSION`" $FULLFILEUNCOMPRE
 echo "  Clean up hddrootfs.buffalo.updated"
 rm -f $RESOURCES/hddrootfs.buffalo.updated
 
-echo "  Create autoupde file $AUTOFILE"
+echo "  Create autoupdate file $AUTOFILE"
 cd $TMPFOLDER
 zip -q -r $AUTOFILE .
 cd $TMPFOLDERBACKOUT
@@ -59,7 +59,7 @@ cd $FIRMWARESHELL
 zip -q -r ../ls_series-$VERSION-$1.zip .
 cd $FIRMWARESHELLBACKOUT
 
-if [ -d $FINALOUTPUTAUTO ]; then
+if [ -d "$FINALOUTPUTAUTO" ]; then
 	echo "  Moving autoupdate to final place at $FINALOUTPUTAUTO"
 	mv $TMPFOLDER/$AUTOFILE $FINALOUTPUTAUTO
 	SIZE="`stat -c%s $FINALOUTPUTAUTO/$AUTOFILE`"
@@ -67,11 +67,11 @@ if [ -d $FINALOUTPUTAUTO ]; then
 else
 	echo "**$FINALOUTPUTAUTO does not exist, keeping autoupdate firmware at $TMPFOLDER/$AUTOFILE"
 	echo "**Consider setting \$FINALOUTPUTAUTO in $0"
-	SIZE="`stat -c%s $TMPFOLDER/$AUTOFILE"
+	SIZE="`stat -c%s $TMPFOLDER/$AUTOFILE`"
 	MD5="`md5sum $TMPFOLDER/$AUTOFILE | cut -c-32`"
 fi
 
-if [ -d $FINALOUTPUTFULL ]; then
+if [ -d "$FINALOUTPUTFULL" ]; then
 	echo "  Moving full firmware to final place at $FINALOUTPUTFULL"
 	mv $RESOURCES/ls_series-$VERSION-$1.zip $FINALOUTPUTFULL
 else
@@ -79,7 +79,7 @@ else
 	echo "**Consider settings \$FINALOUTPUTFULL in $0"
 fi
 
-if [ -f $FW_INFO ]; then
+if [ -f "$FW_INFO" ]; then
 	echo "  Adding changes to fw_info"
 	sed -i '/^\s*<size>$/,/^\s*<\/size>$/ {/size/ !{s/^\(\s*\)[0-9]*$/\1'"$SIZE"'/}}' $FW_INFO
 	sed -i '/^\s*<checksum/,/^\s*<\/checksum>$/ {/checksum/ !{s/^\(\s*\)[a-zA-Z0-9]*$/\1'"$MD5"'/}}' $FW_INFO

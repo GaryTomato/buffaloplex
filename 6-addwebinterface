@@ -17,7 +17,7 @@ do
 	for JSON in `ls $SRC/www/buffalo/www/locale/*.json`
 	do
 	if [ -z "`grep $MSG $JSON`" ]; then
-#		echo "Adding to $JSON, MSG: $MSG"
+		echo "Adding to $JSON, MSG: $MSG"
 		sed -i 's%^\(.*id:\s*"help".*\)$%\1\n'"$LINE"'%' $JSON
 	fi
 	done

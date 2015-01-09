@@ -61,4 +61,3 @@
 	{id: "btn_reload_flexget", value: "Reload FlexGet config"},
 	{id: "transmission_reload_title", value: "Start or Reload FlexGet config"},
 	{id: "transmission_reload_finish", value: "FlexGet config has been reloaded successfully."},
-

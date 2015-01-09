@@ -59,19 +59,36 @@ cd $FIRMWARESHELL
 zip -q -r ../ls_series-$VERSION-$1.zip .
 cd $FIRMWARESHELLBACKOUT
 
-echo "  Moving autoupdate to final place at $FINALOUTPUTAUTO"
-mv $TMPFOLDER/$AUTOFILE $FINALOUTPUTAUTO
-SIZE="`stat -c%s $FINALOUTPUTAUTO/$AUTOFILE`"
-MD5="`md5sum $FINALOUTPUTAUTO/$AUTOFILE | cut -c-32`"
+if [ -d $FINALOUTPUTAUTO ]; then
+	echo "  Moving autoupdate to final place at $FINALOUTPUTAUTO"
+	mv $TMPFOLDER/$AUTOFILE $FINALOUTPUTAUTO
+	SIZE="`stat -c%s $FINALOUTPUTAUTO/$AUTOFILE`"
+	MD5="`md5sum $FINALOUTPUTAUTO/$AUTOFILE | cut -c-32`"
+else
+	echo "**$FINALOUTPUTAUTO does not exist, keeping autoupdate firmware at $TMPFOLDER/$AUTOFILE"
+	echo "**Consider setting \$FINALOUTPUTAUTO in $0"
+	SIZE="`stat -c%s $TMPFOLDER/$AUTOFILE"
+	MD5="`md5sum $TMPFOLDER/$AUTOFILE | cut -c-32`"
+fi
 
-echo "  Moving full firmware to final place at $FINALOUTPUTFULL"
-mv $RESOURCES/ls_series-$VERSION-$1.zip $FINALOUTPUTFULL
+if [ -d $FINALOUTPUTFULL ]; then
+	echo "  Moving full firmware to final place at $FINALOUTPUTFULL"
+	mv $RESOURCES/ls_series-$VERSION-$1.zip $FINALOUTPUTFULL
+else
+	echo "**$FINALOUTPUTFULL does not exist, keeping firmware at $RESOURCES/ls_series-$VERSION-$1.zip"
+	echo "**Consider settings \$FINALOUTPUTFULL in $0"
+fi
 
-echo "  Adding changes to fw_info"
-sed -i '/^\s*<size>$/,/^\s*<\/size>$/ {/size/ !{s/^\(\s*\)[0-9]*$/\1'"$SIZE"'/}}' $FW_INFO
-sed -i '/^\s*<checksum/,/^\s*<\/checksum>$/ {/checksum/ !{s/^\(\s*\)[a-zA-Z0-9]*$/\1'"$MD5"'/}}' $FW_INFO
-sed -i '/^\s*<version/,/^\s*<\/version>$/ {/version/ !{s/^\(\s*\)[-\.0-9]*$/\1'"$VERSIONDOT-$2"'/}}' $FW_INFO
-sed -i '/^\s*<name/,/^\s*<\/name>$/ {/name/ !{s/^\(\s*\).*$/\1LinkStation Series Firmware Updater Ver.'"$VERSIONDOT $1"'/}}' $FW_INFO
+if [ -f $FW_INFO ]; then
+	echo "  Adding changes to fw_info"
+	sed -i '/^\s*<size>$/,/^\s*<\/size>$/ {/size/ !{s/^\(\s*\)[0-9]*$/\1'"$SIZE"'/}}' $FW_INFO
+	sed -i '/^\s*<checksum/,/^\s*<\/checksum>$/ {/checksum/ !{s/^\(\s*\)[a-zA-Z0-9]*$/\1'"$MD5"'/}}' $FW_INFO
+	sed -i '/^\s*<version/,/^\s*<\/version>$/ {/version/ !{s/^\(\s*\)[-\.0-9]*$/\1'"$VERSIONDOT-$2"'/}}' $FW_INFO
+	sed -i '/^\s*<name/,/^\s*<\/name>$/ {/name/ !{s/^\(\s*\).*$/\1LinkStation Series Firmware Updater Ver.'"$VERSIONDOT $1"'/}}' $FW_INFO
+else
+	echo "**$FW_INFO doesn't exist."
+	echo "**Consider setting \$FW_INFO in $0"
+fi
 
 echo "DONE ls_series-$VERSION-$1.zip"
 echo "DONE $AUTOFILE"

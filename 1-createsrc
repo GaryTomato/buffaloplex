@@ -12,6 +12,18 @@
 OLDSRC=./old-src
 
 echo $0 running...
+
+echo "  Making sure that files that are not synced with GitHub are present"
+if [ ! -f $FIRMWARES/ls_series-$VERSION.zip ]; then
+	echo "  -- Getting Linkstation firmware"
+	sh $FIRMWARES/scripts/get-firmware
+fi
+
+if [ ! -f $FIRMWARES/$PLEXBIN ]; then
+	echo " -- Getting Plex Media Server package"
+	sh $FIRMWARES/scripts/get-plex
+fi
+
 [ -d $RESOURCES/ls_series-$VERSION ] && rm -rf $RESOURCES/ls_series-$VERSION
 echo "  Unzipping ls_series-$VERSION.zip"
 unzip -q -o $FIRMWARES/ls_series-$VERSION.zip -d $RESOURCES

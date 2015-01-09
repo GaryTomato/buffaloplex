@@ -1,18 +1,15 @@
-# Linkstation firmware
+# Linkstation firmware (too big)
 ls_series-*.zip
 hddrootfs.img
 hddrootfs.buffalo.updated
 
-# Unzipped firmware
+# Unzipped firmware (too big)
 resources/ls_series-*
 
-# Sources
+# Plex package (too big)
+firmwares/PlexMediaServer-*
+
+# Generated sources, temporary folder
 src/*
 old-src/*
-
-#Temporary folder
 tmp-compile/*
-
-#Archives
-resources/archive/*
-

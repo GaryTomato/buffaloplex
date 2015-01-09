@@ -1,0 +1,25 @@
+#!/bin/sh
+#Let's dig into the source and add APM support and Plex support for the web interface (and the binary)
+
+. ./0-vars
+
+echo $0 running...
+
+echo "  Adding website components for Plex and APM"
+tar -xzf $RESOURCES/additions/webcode.tgz -C $SRC
+
+echo "  Adding custom strings to all language"
+OLDIFS=$IFS
+while IFS='';read -r LINE || [[ -n "$LINE" ]]
+do
+	IFS=$OLDIFS
+	MSG=`echo "$LINE" | sed 's/^.*id: \("[^"]*"\).*$/\1/'`
+	for JSON in `ls $SRC/www/buffalo/www/locale/*.json`
+	do
+	if [ -z "`grep $MSG $JSON`" ]; then
+#		echo "Adding to $JSON, MSG: $MSG"
+		sed -i 's%^\(.*id:\s*"help".*\)$%\1\n'"$LINE"'%' $JSON
+	fi
+	done
+done < $RESOURCES/additions/diffen.json
+IFS=$OLDIFS

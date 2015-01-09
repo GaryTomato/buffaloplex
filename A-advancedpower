@@ -1,0 +1,46 @@
+#!/bin/sh
+#Change power management so auto-power does not shut NAS down if there are network connections
+
+. ./0-vars
+
+echo $0 running...
+
+#echo "  Enable port 7 for WOL"
+#POWERMANAGERSCRIPT=$SRC/etc/init.d/pwrmgr.sh
+#if [ -z "`grep DEFAULT_PORT2 $POWERMANAGERSCRIPT`" ]; then
+#	sed -i 's/DEFAULT_PORT=9/DEFAULT_PORT=9\nDEFAULT_PORT2=7/' $POWERMANAGERSCRIPT
+#	sed -i 's/-p \${DEFAULT_PORT} /-p ${DEFAULT_PORT} -p ${DEFAULT_PORT2} /' $POWERMANAGERSCRIPT
+#fi
+
+#echo "  Enable keep alive while there are open connections"
+#if [ -z "`grep KAC_NETW $POWERMANAGERSCRIPT`" ]; then
+#	sed -i '5 i if [ -f /usr/local/sbin/pmcd_exec.sh ]; then' $POWERMANAGERSCRIPT
+#	sed -i '6 i if [ -z "`grep KAC_NETW /usr/local/sbin/pmcd_exec.sh`" ]; then' $POWERMANAGERSCRIPT
+#	sed -i "7 i sed -i '/KAC_FWUP=4/a KAC_NETW=8' /usr/local/sbin/pmcd_exec.sh" $POWERMANAGERSCRIPT
+#	sed -i '8 i sed -i '"'"'/return 0/i test \"x`/usr/local/bin/libbuffalo_bin config read advancedpower_status.advancedpower.melco.etc`\" == \"xon\" && test -n \"`netstat -tun 2> /dev/null | grep ESTABLISHED`\" && return \${KAC_NETW}'"'"' /usr/local/sbin/pmcd_exec.sh' $POWERMANAGERSCRIPT
+#	sed -i '9 i /usr/local/bin/libbuffalo_bin config write advancedpower_mac.advancedpower.melco.etc `ifconfig eth0 | grep "HWaddr" | sed "s/^.*HWaddr \(\S*\).*$/\1/" | sed "s/://g"`' $POWERMANAGERSCRIPT
+#	sed -i '10 i fi' $POWERMANAGERSCRIPT
+#	sed -i '11 i fi' $POWERMANAGERSCRIPT
+#fi
+
+echo "  Set up melco file for keepalive"
+if [ ! -f $SRC/etc/melco/advancedpower ]; then
+	echo "advancedpower_status=off" > $SRC/etc/melco/advancedpower
+fi
+
+echo "  Adding web interface for keepalive"
+tar -xzf $RESOURCES/additions/keepalive.tgz -C $SRC
+
+#/root/.files/initfile.tar.gz - extract, change /etc/melco/advancedpower, compress
+if [ -f $SRC/etc/melco/advancedpower ]; then
+    echo "  Untarring initfile.tar.gz to add advancedpower"
+    tar -xzf $SRC/root/.files/initfile.tar.gz -C $SRC/root/.files
+    rm -f $SRC/root/.files/initfile.tar.gz
+    cp $SRC/etc/melco/advancedpower $SRC/root/.files/etc/melco
+    echo "  Tarring initfile.tar.gz"
+    tar -C $SRC/root/.files -czf $SRC/root/initfile.tar.gz etc
+    rm -rf $SRC/root/.files
+    mkdir $SRC/root/.files
+    mv $SRC/root/initfile.tar.gz $SRC/root/.files/initfile.tar.gz
+fi
+

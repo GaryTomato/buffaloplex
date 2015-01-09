@@ -1,0 +1,80 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+echo "Usage: $0 <release-name> <minor-version>"
+echo "Example: $0 junwei 3.58"
+exit
+fi
+
+. ./0-vars
+
+FINALOUTPUTFULL=/media/sf_LinuxShare
+FINALOUTPUTAUTO=/media/sf_LinuxShare/buffaloplex
+FULLFILEUNCOMPRESSED=$FIRMWARESHELL/LinkStation_FW$VERSIONDOT
+AUTOFILE=linkstation_series-$VERSIONDOT-$1.zip
+FW_INFO=$FINALOUTPUTAUTO/fw_info2.xml
+
+echo $0 running...
+
+echo "  Cleaning up old versions"
+rm -f $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/hddrootfs.img
+rm -f $RESOURCES/hddrootfs.buffalo.updated
+
+echo "  Update firmware revision"
+DAT="`date "+%Y/%m/%d %H:%M:%S"`"
+sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1/" $SRC/etc/linkstation_release
+sed -i "s/^SUBVERSION=.*\$/SUBVERSION=$2/" $SRC/etc/linkstation_release
+sed -i "s,^BUILDDATE=.*\$,BUILDDATE=$DAT," $SRC/etc/linkstation_release
+sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
+sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
+sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
+sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
+
+echo "  Compressing hddrootfs.buffalo.updated"
+tar -C $SRC -czf $RESOURCES/hddrootfs.buffalo.updated .
+
+echo "  Encrypting to hddrootfs.img"
+zip -q -j -e $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/hddrootfs.img $RESOURCES/hddrootfs.buffalo.updated -P "`cat $RESOURCES/password$VERSION`"
+
+echo "  Copying hddrootfs.buffalo.updated to autoupdate folder"
+rm -rf $TMPFOLDER
+mkdir $TMPFOLDER
+
+#unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/password$VERSION`" $FULLFILEUNCOMPRESSED/hddrootfs.img
+cp $RESOURCES/hddrootfs.buffalo.updated $TMPFOLDER
+unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/initrd$VERSION`" $FULLFILEUNCOMPRESSED/initrd.img
+unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/u-boot$VERSION`" $FULLFILEUNCOMPRESSED/u-boot.img
+unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/uimage$VERSION`" $FULLFILEUNCOMPRESSED/uImage.img
+
+echo "  Clean up hddrootfs.buffalo.updated"
+rm -f $RESOURCES/hddrootfs.buffalo.updated
+
+echo "  Create autoupde file $AUTOFILE"
+cd $TMPFOLDER
+zip -q -r $AUTOFILE .
+cd $TMPFOLDERBACKOUT
+
+echo "  Creating full firmware zip ls_series-$VERSION-$1.zip"
+cd $FIRMWARESHELL
+zip -q -r ../ls_series-$VERSION-$1.zip .
+cd $FIRMWARESHELLBACKOUT
+
+echo "  Moving autoupdate to final place at $FINALOUTPUTAUTO"
+mv $TMPFOLDER/$AUTOFILE $FINALOUTPUTAUTO
+SIZE="`stat -c%s $FINALOUTPUTAUTO/$AUTOFILE`"
+MD5="`md5sum $FINALOUTPUTAUTO/$AUTOFILE | cut -c-32`"
+
+echo "  Moving full firmware to final place at $FINALOUTPUTFULL"
+mv $RESOURCES/ls_series-$VERSION-$1.zip $FINALOUTPUTFULL
+
+echo "  Adding changes to fw_info"
+sed -i '/^\s*<size>$/,/^\s*<\/size>$/ {/size/ !{s/^\(\s*\)[0-9]*$/\1'"$SIZE"'/}}' $FW_INFO
+sed -i '/^\s*<checksum/,/^\s*<\/checksum>$/ {/checksum/ !{s/^\(\s*\)[a-zA-Z0-9]*$/\1'"$MD5"'/}}' $FW_INFO
+sed -i '/^\s*<version/,/^\s*<\/version>$/ {/version/ !{s/^\(\s*\)[-\.0-9]*$/\1'"$VERSIONDOT-$2"'/}}' $FW_INFO
+sed -i '/^\s*<name/,/^\s*<\/name>$/ {/name/ !{s/^\(\s*\).*$/\1LinkStation Series Firmware Updater Ver.'"$VERSIONDOT $1"'/}}' $FW_INFO
+
+echo "DONE ls_series-$VERSION-$1.zip"
+echo "DONE $AUTOFILE"
+echo "AutoUpdate FILESIZE: $SIZE"
+echo "AutoUpdate MD5SUM: $MD5"
+

@@ -1,0 +1,5 @@
+wget ftp://ftp.debian.org/debian/pool/main/g/gcc-4.7/gcc-4.7-base_4.7.2-5_armel.deb
+wget ftp://ftp.debian.org/debian/pool/main/g/gcc-4.7/libgcc1_4.7.2-5_armel.deb
+wget ftp://ftp.debian.org/debian/pool/main/e/eglibc/libc-bin_2.13-38+deb7u6_armel.deb
+wget ftp://ftp.debian.org/debian/pool/main/e/eglibc/libc6_2.13-38+deb7u6_armel.deb
+

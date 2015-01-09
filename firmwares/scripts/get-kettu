@@ -1,0 +1,2 @@
+wget -O kettu.zip --no-check-certificate 'https://github.com/endor/kettu/archive/master.zip'
+

@@ -1,0 +1,15 @@
+#!/bin/sh
+SRC=""
+cp $SRC/bin/cat $SRC/usr/local/plexroot/bin
+cp $SRC/bin/grep $SRC/usr/local/plexroot/bin
+cp $SRC/bin/ln $SRC/usr/local/plexroot/bin
+cp $SRC/bin/ls $SRC/usr/local/plexroot/bin
+cp $SRC/bin/ps $SRC/usr/local/plexroot/bin
+cp $SRC/bin/rm $SRC/usr/local/plexroot/bin
+cp $SRC/bin/vi $SRC/usr/local/plexroot/bin
+cp $SRC/usr/bin/dirname $SRC/usr/local/plexroot/bin
+cp $SRC/sbin/ldconfig $SRC/usr/local/plexroot/bin
+cp $SRC/usr/bin/ldd $SRC/usr/local/plexroot/bin
+cp $SRC/usr/bin/readlink $SRC/usr/local/plexroot/bin
+cp $SRC/usr/local/bin/strace $SRC/usr/local/plexroot/bin
+

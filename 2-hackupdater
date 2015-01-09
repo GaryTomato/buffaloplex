@@ -1,0 +1,16 @@
+#!/bin/sh
+
+. ./0-vars
+
+LSUPDATER="$FIRMWARESHELL/LinkStation_FW$VERSIONDOT/LSUpdater.ini"
+
+echo $0 running...
+sed -i 's/VersionCheck = 1/VersionCheck = 0/' $LSUPDATER
+if [ -z "`cat $LSUPDATER | grep 'Debug = 1'`" ]; then
+	if [ -z "`cat $LSUPDATER | grep '\[SpecialFlags\]'`" ]; then
+		echo -ne "\r\n[SpecialFlags]\r\nDebug = 1\r\n" >> $LSUPDATER
+	else
+		sed -i 's/\[SpecialFlags\]/[SpecialFlags]\r\nDebug = 1/' $LSUPDATER
+	fi
+fi
+

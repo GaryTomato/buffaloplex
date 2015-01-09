@@ -1,0 +1,3 @@
+#!/bin/sh
+wget http://ipkg.nslu2-linux.org/feeds/optware/cs08q1armel/cross/stable/unfs3_0.9.22-1_arm.ipk
+wget http://ipkg.nslu2-linux.org/feeds/optware/cs08q1armel/cross/stable/portmap_4-5_arm.ipk

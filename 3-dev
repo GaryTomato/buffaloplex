@@ -1,0 +1,27 @@
+#!/bin/sh
+#Let's dig into the source and add some developer's relief
+
+. ./0-vars
+
+echo $0 running...
+
+echo "  Adding compiler and plex debugger for development"
+cp $FIRMWARES/scripts/setup-compiler $SRC/root
+cp $FIRMWARES/scripts/debugplex $SRC/root
+cp $FIRMWARES/scripts/deploy-flexget $SRC/root
+
+echo "  Adding test files"
+if [ -d $RESOURCES/additions/test ]; then
+    if [ -n "`ls $RESOURCES/additions/test`" ]; then
+	    cp -r $RESOURCES/additions/test/* $SRC
+    fi
+fi
+
+#Changing expire time for the web to 60 minutes
+#sed -i 's/^\(\s*var\s*COOKIE_EXPIRATION_MIN\s*=\s*\)[0-9]*\s*;\s*$/\160;/' $SRC/www/buffalo/www/static/authentication/login_utils.js
+#sed -i 's/^\(\s*expire\s*=>\s*'"'"'+\)[0-9]*\(m'"'"'.*\)$/\160\2/' $SRC/www/cgi-bin/module/BUFFALO/Session/Create.pm
+
+#Changing SSHD config (brute force)
+#sed -i 's/\s*PermitRootLogin\s\s*no/PermitRootLogin yes/' $SRC/etc/sshd_config
+#sed -i 's/\s*UsePAM\s\s*yes/UsePAM no/' $SRC/etc/sshd_config
+

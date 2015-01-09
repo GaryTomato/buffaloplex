@@ -1,0 +1,86 @@
+#!/bin/sh
+
+#This saves a lot of headache!
+test ! -d /etc/ssl && mkdir /etc/ssl
+test ! -f /etc/ssl/cert.pem && cp /etc/melco/fw_cert.crt /etc/ssl/cert.pem
+echo "Downloading Python source"
+wget-ssl --ca-certificate /etc/ssl/cert.pem https://www.python.org/ftp/python/2.7.9/Python-2.7.9.tgz
+tar -xzf Python-2.7.9.tgz
+
+echo "Custom firmware specific optware setup
+test ! -d /opt && mkdir /opt
+test -d /mnt/disk1/.optware && mount --bind /mnt/disk1/.optware /opt && OPTWAREDONE="done"
+test -d /mnt/array1/.optware && mount --bind /mnt/array1/.optware /opt && OPTWAREDONE="done"
+
+echo "If not set up, run installer"
+test ! -d /mnt/disk1 && ln -s /mnt/array1 /mnt/disk1
+test -z "$OPTWAREDONE" && . /root/optware-setup/ls-mvkw-bootstrap_1.2-7_arm.xsh
+
+echo "Quick update"
+ipkg update
+ipkg install gcc make binutils openssl-dev ncurses-dev libgcrypt zlib readline bzip2 gdbm
+
+cd Python-2.7.9
+export CFLAGS="-L/opt/lib"
+./configure --prefix=/usr/local/flexget --enable-unicode=ucs4 --enable-shared LDFLAGS="-Wl,-rpath /opt/lib"
+#add to setup.py /opt/lib and /opt/include under detect_modules
+sed -i -e "445 i\ \ \ \ \ \ \ \ \ \ \ \ add_dir_to_list(self.compiler.library_dirs, '/opt/lib')" -e "445 i\ \ \ \ \ \ \ \ \ \ \ \ add_dir_to_list(self.compiler.include_dirs, '/opt/include')" ./setup.py
+sed -i "2932 d" Modules/_ssl.c
+sed -i '2932 i const char *servername =  s->session && !s->tlsext_hostname ?' Modules/_ssl.c
+sed -i "2933 i s->session->tlsext_hostname :" Modules/_ssl.c
+sed -i "2934 i s->tlsext_hostname;" Modules/_ssl.c
+
+make -j2
+make install
+find /usr/local/flexget > /root/python27files
+echo "Downloading pip"
+wget-ssl --ca-certificate /etc/ssl/cert.pem https://bootstrap.pypa.io/get-pip.py
+
+echo "Setting up bigger /tmp"
+touch /tmp/bigtemptest
+if [ -d /mnt/disk1 ]; then
+	test ! -d /mnt/disk1/tmp && mkdir /mnt/disk1/tmp
+	test -z "`mount | grep /mnt/disk1/tmp`" && mount --bind /mnt/disk1/tmp /tmp
+else
+	if [ -d /mnt/array1 ]; then
+		test ! -d /mnt/array1/tmp && mkdir /mnt/array1/tmp
+		test -z "`mount | grep /mnt/array1/tmp`" && mount --bind /mnt/array1/tmp /tmp
+	fi
+fi
+test -f /tmp/bigtemptest && rm -f /tmp/bigtemptest && umount /tmp
+
+echo "Installing pip"
+export PYTHONUSERBASE=/usr/local/flexget
+cp /usr/local/flexget/lib/libpython2.7.so* /lib 
+
+/usr/local/bin/python2.7 get_pip.py --user
+
+echo "Install flexget"
+find /usr/local/flexget > /root/python27pipadded
+/usr/local/flexget/bin/pip install flexget
+find /usr/local/flexget > /root/python27flexgetadded
+
+echo "Run version check"
+/usr/local/flexget/bin/flexget -V
+
+diff /root/python27files /root/python27pipadded | sed -n '\,^+/usr, s/^+//p' > /root/diffaddpip
+diff /root/python27pipadded /root/python27flexgetadded | sed -n '\,^+/usr, s/^+//p' > /root/diffaddflexget
+diff /root/python27files /root/python27flexgetadded | sed -n '\,^+/usr, s/^+//p' > /root/diffpythontoflexget
+
+cd /
+tar -cvzf /root/flexget.tgz usr/local/flexget lib/libpython2.7.so*
+
+exit
+
+#If this was not restricted to /usr/local/flexget, then we'd need the below
+DST=/root/py27
+test ! -d $DST && mkdir $DST
+
+while read t
+do
+	test -d $t && mkdir -p $DST$t && continue
+	test ! -f $t && echo "WARNING: $t is not a file" && continue
+	baset=`dirname $t`
+	test ! -d $DST$baset && mkdir -p $DST$baset
+	cp $t $DST/$t
+done < /root/diff*

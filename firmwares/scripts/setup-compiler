@@ -1,0 +1,39 @@
+#!/bin/sh
+
+TRANSMISSION_VERSION=2.84
+
+#umount /opt 2> /dev/null
+#rm -rf /mnt/array1/.optware
+ln -s /mnt/array1 /mnt/disk1
+cd /root
+echo "You need to manually exit the sub-shell after optware is installed."
+sh ls-mvkw-bootstrap_1.2-7_arm.xsh
+rm /mnt/disk1
+mkdir /root/compiler
+cd /root/compiler
+
+ipkg update
+ipkg install libidn
+ipkg remove wget
+ipkg install wget-ssl
+ipkg install optware-devel openssl-dev libcurl-dev
+ipkg install perl-libwww perl-uri perl-encode-detect perl-http-response-encoding
+ipkg install xz-utils
+
+svn co http://svn.nslu2-linux.org/svnroot/optware/trunk svn-cs08q1armel
+cd svn-cs08q1armel
+sed -i 's/ awk/ gawk/' Makefile
+make cs08q1armel-target
+cd cs08q1armel
+make directories toolchain ipkg-utils
+sed -i "s/^TRANSMISSION_VERSION=.*\$/TRANSMISSION_VERSION=$TRANSMISSION_VERSION/" ./make/transmission.mk
+sed -i "s/^TRANSMISSION_UNZIP=.*\$/TRANSMISSION_UNZIP=\/opt\/bin\/xzcat/" ./make/transmission.mk
+#make openssl
+#make zlib
+#make libcurl
+curl https://cloud.github.com/downloads/libevent/libevent/libevent-2.0.20-stable.tar.gz > ./downloads/libevent-2.0.20-stable.tar.gz
+#make libevent
+make transmission
+#Fix libcurl compiler error which I couldn't track properly yet...
+sed -i 's/^URL:\(.*\)$/#URL:\1/' /root/compiler/svn-cs08q1armel/cs08q1armel/staging/opt/lib/pkgconfig/libcurl.pc
+make transmission

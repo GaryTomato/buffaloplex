@@ -1,0 +1,27 @@
+#!/bin/sh
+#Get the vanilla firmware and break it out
+
+. ./0-vars
+
+#Possible passwords
+#1NIf_2yUOlRDpYZUVNqboRpMBoZwT4PzoUvOPUp6l
+#aAhvlM1Yp7_2VSm6BhgkmTOrCN1JyE0C5Q6cB3oBB
+#YvSInIQopeipx66t_DCdfEvfP47qeVPhNhAuSYmA4
+#IeY8omJwGlGkIbJm2FH_MV4fLsXE8ieu0gNYwE6Ty
+
+OLDSRC=./old-src
+
+echo $0 running...
+[ -d $RESOURCES/ls_series-$VERSION ] && rm -rf $RESOURCES/ls_series-$VERSION
+echo "  Unzipping ls_series-$VERSION.zip"
+unzip -q -o $FIRMWARES/ls_series-$VERSION.zip -d $RESOURCES
+echo "  Unzipping hddrootfs.img"
+unzip -q -o -d $RESOURCES -P "`cat $RESOURCES/password$VERSION`" $RESOURCES/ls_series-$VERSION/LinkStation_FW$VERSIONDOT/hddrootfs.img
+rm $RESOURCES/ls_series-$VERSION/LinkStation_FW$VERSIONDOT/hddrootfs.img
+rm -rf $OLDSRC
+test -d $SRC && mv $SRC $OLDSRC
+mkdir $SRC
+echo "  Untarring hddrootfs.buffalo.updated"
+tar -xzf $RESOURCES/hddrootfs.buffalo.updated -C $SRC
+rm $RESOURCES/hddrootfs.buffalo.updated
+

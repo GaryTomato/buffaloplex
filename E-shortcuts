@@ -1,0 +1,9 @@
+#!/bin/sh
+#Add shortcuts on the left menu bar
+
+. ./0-vars
+
+echo $0 running...
+
+echo "  Changing web interface to add shortcut buttons"
+tar -xzf $RESOURCES/additions/shortcuts.tgz -C $SRC

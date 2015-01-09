@@ -1,0 +1,1 @@
+wget -O web-control.zip --no-check-certificate 'https://github.com/ronggang/transmission-web-control/archive/master.zip'

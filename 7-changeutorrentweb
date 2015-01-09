@@ -1,0 +1,63 @@
+#!/bin/sh
+#Construct webui.zip and move it to the right place to upgrade the torrent interface and add phone support
+#This method (untar) overwrites /etc/init.d/bittorrent.sh which needs to be double-checked with a new Linkstation firmware
+
+. ./0-vars
+
+echo $0 running...
+
+TARGET=$SRC/usr/local/bittorrent/webui.zip
+
+WEBTMPFOLDER=./webuitmp
+
+if [ -d "$WEBTMPFOLDER" ]; then
+	rm -rf "$WEBTMPFOLDER"
+	mkdir "$WEBTMPFOLDER"
+fi
+
+echo "  Adding BitTorrent updated web interface"
+unzip -q -o "$WEBUI" -d "$WEBTMPFOLDER"
+mkdir "$WEBTMPFOLDER/mini"
+unzip -q -o "$MINIUI" -d "$WEBTMPFOLDER/mini"
+rm $TARGET
+cd $WEBTMPFOLDER
+zip -q -r ../$TARGET *
+cd ..
+rm -rf "$WEBTMPFOLDER"
+chmod 755 $TARGET
+
+echo "  Adding updated utorrent controls"
+tar -xzf $RESOURCES/additions/utorrentupdate.tgz -C $SRC
+
+echo "  Adding crontab"
+if [ -z "`grep 'btautoloader' $SRC/etc/cron/crontabs/root`" ]; then
+    echo "* * * * * /usr/local/sbin/btautoloader" >> $SRC/etc/cron/crontabs/root
+fi
+
+BTC=$SRC/etc/melco/bittorrent
+if [ -z "`grep '^\s*bittorrent_autoload_remove' $BTC`" ]; then
+	echo "bittorrent_autoload_remove=on" >> $BTC
+fi
+
+if [ -z "`grep '^\s*bittorrent_autoload_log' $BTC`" ]; then
+	echo "bittorrent_autoload_log=off" >> $BTC
+fi
+
+if [ -z "`grep '^\s*bittorrent_password' $BTC`" ]; then
+	echo "bittorrent_password=" >> $BTC
+fi
+
+#/root/.files/initfile.tar.gz - extract, change /etc/melco/bittorrent, compress
+if [ -f $SRC/etc/melco/bittorrent ]; then
+    echo "  Untarring initfile.tar.gz to change bittorrent"
+    tar -xzf $SRC/root/.files/initfile.tar.gz -C $SRC/root/.files
+    rm -f $SRC/root/.files/initfile.tar.gz
+    cp $SRC/etc/melco/bittorrent $SRC/root/.files/etc/melco
+    cp $SRC/etc/cron/crontabs/root $SRC/root/.files/etc/cron/crontabs
+    echo "  Tarring initfile.tar.gz"
+    tar -C $SRC/root/.files -czf $SRC/root/initfile.tar.gz etc
+    rm -rf $SRC/root/.files
+    mkdir $SRC/root/.files
+    mv $SRC/root/initfile.tar.gz $SRC/root/.files/initfile.tar.gz
+fi
+

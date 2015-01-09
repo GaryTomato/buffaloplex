@@ -1,0 +1,38 @@
+#!/bin/sh
+#Update NasNavi from 2.66 to 2.78/2.79 (Windows/OSX)
+
+. ./0-vars
+
+echo $0 running...
+
+FOLDERSOSX=(
+	"$SRC/mnt/.info/contents_nasnavionly/English/NasNavi2/Macintosh"
+	"$SRC/mnt/.info/contents_nasnavionly/Japanese/NasNavi2/Macintosh"
+	"$SRC/mnt/.info/contents/English/NasNavi2/Macintosh"
+	"$SRC/mnt/.info/contents/Japanese/NasNavi2/Macintosh"
+)
+FOLDERSWIN=(
+	"$SRC/mnt/.info/contents_nasnavionly/English/NasNavi2/Windows"
+	"$SRC/mnt/.info/contents_nasnavionly/Japanese/NasNavi2/Windows"
+	"$SRC/mnt/.info/contents/English/NasNavi2/Windows"
+	"$SRC/mnt/.info/contents/Japanese/NasNavi2/Windows"
+)
+echo "  Adding NasNavi for OSX"
+for i in "${FOLDERSOSX[@]}"
+do
+#	echo "Changing Mac NasNavi package in $i"
+	if [ -f $i/$OLDOSX ]; then
+		rm $i/$OLDOSX
+	fi
+	cp $NASNAVIOSX $i
+done
+echo "  Adding NasNavi for Windows"
+for i in "${FOLDERSWIN[@]}"
+do
+#	echo "Changing Win NasNavi package in $i"
+	if [ -f $i/$OLDWIN ]; then
+		rm $i/$OLDWIN
+	fi
+	cp $NASNAVIWIN $i
+done
+

@@ -1,0 +1,11 @@
+#!/bin/sh
+#Let's enable the Buffalo created NFS interface
+
+. ./0-vars
+
+echo $0 running...
+
+echo "  Adding NFS"
+tar -xzf $RESOURCES/additions/nfs.tgz -C $SRC
+
+

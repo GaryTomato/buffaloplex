@@ -1,0 +1,2 @@
+wget -O shift.zip --no-check-certificate 'https://github.com/killemov/Shift/archive/master.zip'
+

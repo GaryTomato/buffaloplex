@@ -1,0 +1,9 @@
+#!/bin/sh
+#Add autoupdate capabilities using dropbox
+
+. ./0-vars
+
+echo $0 running...
+
+echo "  Adding autoupdate script changes"
+tar -xzf $RESOURCES/additions/autoupdate.tgz -C $SRC

@@ -1,0 +1,31 @@
+#!/bin/sh
+
+if [ $# -eq 2 ]; then
+	echo "Two command-line parameters found. Assuming production build."
+else
+	if [ $# -eq 3 ]; then
+		echo "Three command-line parameters found. Assuming developer build."
+	else
+		echo "Wrong number of parameters found ($#)."
+		echo "Usage: $0 <release-name> <minor-version> [<dev_build>]"
+		exit
+	fi
+fi
+
+sh 1-createsrc
+sh 2-hackupdater
+if [ $# -eq 3 ]; then
+	sh 3-dev
+fi
+sh 4-optware
+sh 5-addplexbinary
+sh 6-addwebinterface
+sh 7-changeutorrentweb
+sh 8-addtransmission
+sh 9-updatenasnavi
+sh A-advancedpower
+sh B-nfs
+sh C-ssh
+sh D-autoupdate
+sh E-shortcuts
+sh Z-compile $1 $2

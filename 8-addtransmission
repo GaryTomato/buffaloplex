@@ -1,0 +1,100 @@
+#!/bin/sh
+#Add Transmission versions and update webui to support them. Also the binary to start them.
+
+. ./0-vars
+
+TRANSMISSIONBASE=$SRC/usr/local/transmission
+FLEXGETBASE=$SRC/usr/local/flexget
+
+echo $0 running...
+
+if [ -d $TRANSMISSIONBASE ]; then
+	rm -rf $TRANSMISSIONBASE
+fi
+mkdir $TRANSMISSIONBASE
+
+if [ -d $FLEXGETBASE ]; then
+        rm -rf $FLEXGETBASE
+fi
+
+echo "  Adding FlexGet"
+mkdir $FLEXGETBASE
+tar -xzf $FIRMWARES/flexget-$FLEXGETVERSION.tgz -C $SRC
+
+echo "  Adding kettu"
+mkdir $TRANSMISSIONBASE/kettu
+rm -rf $TMPFOLDER
+mkdir $TMPFOLDER
+unzip -q -o "$FIRMWARES/kettu.zip" -d "$TMPFOLDER"
+cp -rf $TMPFOLDER/kettu-master/* $TRANSMISSIONBASE/kettu
+
+echo "  Adding shift"
+mkdir $TRANSMISSIONBASE/shift
+rm -rf $TMPFOLDER
+mkdir $TMPFOLDER
+unzip -q -o "$FIRMWARES/shift.zip" -d "$TMPFOLDER"
+cp -rf $TMPFOLDER/Shift-master/* $TRANSMISSIONBASE/shift
+
+echo "  Adding web-control"
+mkdir $TRANSMISSIONBASE/web-control
+rm -rf $TMPFOLDER
+mkdir $TMPFOLDER
+unzip -q -o "$FIRMWARES/web-control.zip" -d "$TMPFOLDER"
+mkdir "$TMPFOLDER/secondtemp"
+tar -xzf "$TMPFOLDER/transmission-web-control-master/release/transmission-control-full.tar.gz" -C "$TMPFOLDER/secondtemp"
+cp -rf $TMPFOLDER/secondtemp/web/* $TRANSMISSIONBASE/web-control
+
+echo "  Modifying webpage"
+tar -xzf $RESOURCES/additions/transmission.tgz -C $SRC
+
+echo "  Adding Transmission stable"
+mkdir $TRANSMISSIONBASE/stable
+rm -rf $TMPFOLDER
+mkdir $TMPFOLDER
+tar -xf $FIRMWARES/transmission_${TRANSMISSIONSTABLE_VERSION}-1_arm.ipk -C $TMPFOLDER
+tar -xzf $TMPFOLDER/data.tar.gz -C $TMPFOLDER
+cp -r $TMPFOLDER/opt/bin $TRANSMISSIONBASE/stable
+cp -r $TMPFOLDER/opt/share $TRANSMISSIONBASE/stable
+
+echo "  Adding transmission latest"
+mkdir $TRANSMISSIONBASE/latest
+rm -rf $TMPFOLDER
+mkdir $TMPFOLDER
+tar -xf $FIRMWARES/transmission_${TRANSMISSIONLATEST_VERSION}-1_arm.ipk -C $TMPFOLDER
+tar -xzf $TMPFOLDER/data.tar.gz -C $TMPFOLDER
+cp -r $TMPFOLDER/opt/bin $TRANSMISSIONBASE/latest
+cp -r $TMPFOLDER/opt/share $TRANSMISSIONBASE/latest
+
+echo "  Modifying web-control skin to include clutch skin"
+mv $TRANSMISSIONBASE/latest/share/transmission/web/index.html $TRANSMISSIONBASE/latest/share/transmission/web/index.original.html
+cp -r $TRANSMISSIONBASE/latest/share/transmission/web/* $TRANSMISSIONBASE/web-control
+mv $TRANSMISSIONBASE/latest/share/transmission/web/index.original.html $TRANSMISSIONBASE/latest/share/transmission/web/index.html
+
+rm -rf $TMPFOLDER
+mkdir $TMPFOLDER
+tar -xf $FIRMWARES/libevent_2.0.20-1_arm.ipk -C $TMPFOLDER
+tar -xzf $TMPFOLDER/data.tar.gz -C $TMPFOLDER
+cp -rf $TMPFOLDER/opt/lib/libevent* $SRC/lib
+
+rm -rf $TMPFOLDER
+
+echo "  Adding crontab"
+if [ -z "`grep 'flexgetstatus' $SRC/etc/cron/crontabs/root`" ]; then
+    echo "* * * * * /usr/local/sbin/flexgetstatus.sh" >> $SRC/etc/cron/crontabs/root
+fi
+
+
+#/root/.files/initfile.tar.gz - extract, change /etc/melco/bittorrent, compress
+if [ -f $SRC/etc/melco/transmission ]; then
+    echo "  Untarring initfile.tar.gz to add transmission"
+    tar -xzf $SRC/root/.files/initfile.tar.gz -C $SRC/root/.files
+    rm -f $SRC/root/.files/initfile.tar.gz
+    cp $SRC/etc/melco/transmission $SRC/root/.files/etc/melco
+    cp $SRC/etc/cron/crontabs/root $SRC/root/.files/etc/cron/crontabs
+    echo "  Tarring initfile.tar.gz"
+    tar -C $SRC/root/.files -czf $SRC/root/initfile.tar.gz etc
+    rm -rf $SRC/root/.files
+    mkdir $SRC/root/.files
+    mv $SRC/root/initfile.tar.gz $SRC/root/.files/initfile.tar.gz
+fi
+

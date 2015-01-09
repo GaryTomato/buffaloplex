@@ -1,0 +1,26 @@
+#!/bin/sh
+#Let's dig into the source and add the option to reconnect optware if it was set up earlier
+
+. ./0-vars
+
+echo $0 running...
+
+echo "  Untar optware startup files"
+tar -xzf $RESOURCES/additions/optware.tgz -C $SRC
+
+echo "  Add Optware path to profile"
+if [ -z "`grep '\/opt\/sbin' $SRC/etc/profile`" ]; then
+	echo -ne "\n\nPATH=/opt/bin:/opt/sbin:\$PATH\n\n" >> $SRC/etc/profile
+fi
+
+echo "  Add setup to rcS"
+RCS=$SRC/etc/init.d/rcS
+if [ -z "`grep 'rc.optware start' $RCS`" ]; then
+cat << EOF >> $RCS
+
+#Optware setup
+[ -x /etc/init.d/rc.optware ] && /etc/init.d/rc.optware start
+
+EOF
+fi
+

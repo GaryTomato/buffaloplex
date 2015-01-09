@@ -1,0 +1,53 @@
+#!/bin/sh
+#Let's dig into the source and add Plex - with the new eglibc6
+
+
+. ./0-vars
+
+echo $0 running...
+
+rm -rf $SRC/usr/local/plex 2> /dev/null
+rm -rf $SRC/usr/local/plexroot 2> /dev/null
+mkdir $SRC/usr/local/plexroot
+
+echo "  Adding support files for chroot"
+rm -rf $TMPFOLDER
+mkdir $TMPFOLDER
+ar p $FIRMWARES/$PLEX_GCC data.tar.gz | tar zx -C $TMPFOLDER
+ar p $FIRMWARES/$PLEX_LIBGCC data.tar.gz | tar zx -C $TMPFOLDER
+ar p $FIRMWARES/$PLEX_LBIN data.tar.gz | tar zx -C $TMPFOLDER
+ar p $FIRMWARES/$PLEX_LIBC data.tar.gz | tar zx -C $TMPFOLDER
+cp -r $TMPFOLDER/* $SRC/usr/local/plexroot
+
+echo "  Adding Plex"
+rm -rf $TMPFOLDER
+mkdir $TMPFOLDER
+tar -xf $FIRMWARES/$PLEXBIN -C $TMPFOLDER
+tar -xzf $TMPFOLDER/package.tgz -C $SRC/usr/local/plexroot/lib
+
+mkdir $SRC/usr/local/plexroot/dev
+mkdir $SRC/usr/local/plexroot/proc
+mkdir $SRC/usr/local/plexroot/mnt
+
+echo "  Adding more binaries to chroot (Plex startup script, APM.sh and bt"
+if [ ! -d $SRC/usr/local/plexroot/bin ]; then
+	mkdir $SRC/usr/local/plexroot/bin
+fi
+cp $SRC/bin/bash $SRC/usr/local/plexroot/bin/
+cp $SRC/bin/sh $SRC/usr/local/plexroot/bin/
+cp $SRC/usr/local/bin/rsync $SRC/usr/local/plexroot/usr/bin/
+
+tar -xzf $RESOURCES/additions/binaries.tgz -C $SRC
+
+#/root/.files/initfile.tar.gz - extract, add /etc/melco/plexserver, compress
+if [ -f $SRC/etc/melco/plexserver ]; then
+    echo "  Untarring initfile.tar.gz to add plexserver"
+    tar -xzf $SRC/root/.files/initfile.tar.gz -C $SRC/root/.files
+    rm -f $SRC/root/.files/initfile.tar.gz
+    cp $SRC/etc/melco/plexserver $SRC/root/.files/etc/melco
+    echo "  Tarring initfile.tar.gz"
+    tar -C $SRC/root/.files -czf $SRC/root/initfile.tar.gz etc
+    rm -rf $SRC/root/.files
+    mkdir $SRC/root/.files
+    mv $SRC/root/initfile.tar.gz $SRC/root/.files/initfile.tar.gz
+fi

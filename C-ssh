@@ -1,0 +1,32 @@
+#!/bin/sh
+#Let's dig into the source and add SSH
+
+. ./0-vars
+
+echo $0 running...
+
+#/etc/securetty - Add pts/0-pts/9 so SSH can log in
+echo "  Adding securetty entries"
+if [ -z "`grep 'pts\/0' $SRC/etc/securetty`" ]; then
+echo -ne "pts/0\npts/1\npts/2\npts/3\npts/4\npts/5\npts/6\npts/7\npts/8\npts/9\n" >> $SRC/etc/securetty
+fi
+
+#/etc/shadow - change root password
+echo "  Changing root password"
+sed -i 's/^root:[^:]*:\(.*\)$/root:$1$$I2o9Z7NcvQAKp7wyCTlia0:\1/' $SRC/etc/shadow
+
+#Adding optware bootstrap, web-time command, SSH config and startup, and web interface
+echo "  Setting up SSH"
+tar -xzf $RESOURCES/additions/ssh.tgz -C $SRC
+
+#/root/.files/initfile.tar.gz - extract, remove root password, compress
+echo "  Untarring initfile.tar.gz to add shadow"
+tar -xzf $SRC/root/.files/initfile.tar.gz -C $SRC/root/.files
+rm -f $SRC/root/.files/initfile.tar.gz
+sed -i 's/^root:[^:]*:\(.*\)$/root:$1$$I2o9Z7NcvQAKp7wyCTlia0:\1/' $SRC/root/.files/etc/shadow
+echo "  Tarring initfile.tar.gz"
+tar -C $SRC/root/.files -czf $SRC/root/initfile.tar.gz etc
+rm -rf $SRC/root/.files
+mkdir $SRC/root/.files
+mv $SRC/root/initfile.tar.gz $SRC/root/.files/initfile.tar.gz
+

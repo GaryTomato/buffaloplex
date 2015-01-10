@@ -25,21 +25,20 @@ DAT="`date "+%Y/%m/%d %H:%M:%S"`"
 sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1/" $SRC/etc/linkstation_release
 sed -i "s/^SUBVERSION=.*\$/SUBVERSION=HDD $2/" $SRC/etc/linkstation_release
 sed -i "s,^BUILDDATE=.*\$,BUILDDATE=$DAT," $SRC/etc/linkstation_release
-#sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
-#sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
-#sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
-#sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
+sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
+sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
+sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
+sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
 
 echo "  Compressing hddrootfs.buffalo.updated"
 tar -C $SRC -czf $RESOURCES/hddrootfs.buffalo.updated .
 
 echo "  Encrypting to hddrootfs.img"
-zip -q -j -e $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/hddrootfs.img $RESOURCES/hddrootfs.buffalo.updated -P "`cat $RESOURCES/password$VERSION`"
+zip -9 -q -j -e $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/hddrootfs.img $RESOURCES/hddrootfs.buffalo.updated -P "`cat $RESOURCES/password$VERSION`"
 
-echo "  Copying hddrootfs.buffalo.updated to autoupdate folder"
+echo "  Copying hddrootfs.buffalo.updated to autoupdate folder and preparing other autoupdate files"
 rm -rf $TMPFOLDER
 mkdir $TMPFOLDER
-
 #unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/password$VERSION`" $FULLFILEUNCOMPRESSED/hddrootfs.img
 cp $RESOURCES/hddrootfs.buffalo.updated $TMPFOLDER
 unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/initrd$VERSION`" $FULLFILEUNCOMPRESSED/initrd.img
@@ -51,7 +50,7 @@ rm -f $RESOURCES/hddrootfs.buffalo.updated
 
 echo "  Create autoupdate file $AUTOFILE"
 cd $TMPFOLDER
-zip -q -r $AUTOFILE .
+zip -9 -q -r $AUTOFILE .
 cd $TMPFOLDERBACKOUT
 
 echo "  Creating full firmware zip ls_series-$VERSION-$1.zip"

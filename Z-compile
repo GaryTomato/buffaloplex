@@ -25,9 +25,9 @@ DAT="`date "+%Y/%m/%d %H:%M:%S"`"
 sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1/" $SRC/etc/linkstation_release
 sed -i "s/^SUBVERSION=.*\$/SUBVERSION=HDD $2/" $SRC/etc/linkstation_release
 sed -i "s,^BUILDDATE=.*\$,BUILDDATE=$DAT," $SRC/etc/linkstation_release
-sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
+sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1-$2\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
 sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
-sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
+sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1-$2\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
 sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
 
 echo "  Compressing hddrootfs.buffalo.updated"

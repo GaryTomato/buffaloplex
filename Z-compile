@@ -31,7 +31,9 @@ sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1-$2\r/" $FIRMWARESHELL/
 sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
 
 echo "  Compressing hddrootfs.buffalo.updated"
-tar -C $SRC -czf $RESOURCES/hddrootfs.buffalo.updated .
+tar -C $SRC -cf $RESOURCES/hddrootfs.buffalo.updated.tar .
+gzip -9 $RESOURCES/hddrootfs.buffalo.updated.tar
+mv $RESOURCES/hddrootfs.buffalo.updated.tar.gz $RESOURCES/hddrootfs.buffalo.updated
 
 echo "  Encrypting to hddrootfs.img"
 zip -9 -q -j -e $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/hddrootfs.img $RESOURCES/hddrootfs.buffalo.updated -P "`cat $RESOURCES/password$VERSION`"

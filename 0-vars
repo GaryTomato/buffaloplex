@@ -33,7 +33,7 @@ OLDOSX=nasnavi-266.dmg.zip
 NASNAVIWIN=$FIRMWARES/nasnavi-278.zip
 NASNAVIOSX=$FIRMWARES/nasnavi-279.dmg.zip
 
-FLEXGETVERSION=1.2.249
+FLEXGETVERSION=1.2.249-notest
 
 rm -rf $TMPFOLDER 2> /dev/null
 mkdir $TMPFOLDER

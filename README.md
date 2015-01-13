@@ -19,7 +19,7 @@ deploy-flexget - it sets up the python2.7 environment to download and install fl
 setup-compiler - sets up a complete compiler environment on the Linkstation to build transmission from source
 You might need to change a few things in your setup to make it work, best to run them line-by-line, the first time you're trying.
 
-Direcotry: resources
+Directory: resources
 
 This directory contains additional resources that are needed for the custom firmware, namely passwords for the firmware so it can be unzipped. The additions folder contains tar-gzipped changes to the firmware. These usually just get untared and dumped into the firmware source directory during build. These might contain new scripts, webpage changes or other files that the custom firmware use during run.
 
@@ -92,10 +92,10 @@ Z-compile
 
 This script compresses the "src" folder and creates a new firmware.
 It requires two command line parameters: a name for the new release and a subversion number. For example:
-"./Z-compile Chris 3.60" will create a firmware with the version number "1.69-Chris" and the subversion number 3.60.
+"./Z-compile Chris 3.59" will create a firmware with the version number "1.69-Chris" and the subversion number 3.59.
 
 buildnewrelease
 
 This script will run all previous scripts to create a custom firmware. It takes three parameters: a name for the new release, a subversion number and an optional parameter "dev" to add the dev package into the firmware.
-"./buildnewrelease Chris 3.60 dev" will build a new firmware from scratch with the version number 1.69-Chris and subversion 3.60.
+"./buildnewrelease Chris 3.59 dev" will build a new firmware from scratch with the version number 1.69-Chris and subversion 3.59.
 

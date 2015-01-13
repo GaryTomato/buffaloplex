@@ -1,5 +1,6 @@
 # Buffalo + Plex
 A Gadgets Under Construction project
+Visit http://www.tomatosoft.hu/gadgets/portfolio/buffalo-linkstation-plex/ for the project page.
 
 This repository contains (almost) all files necessary to recreate the custom firmware of the Buffalo + Plex project.
 In cases where file size was a limitation, a link is provided to download the additional files.

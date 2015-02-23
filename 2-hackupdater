@@ -2,7 +2,7 @@
 
 . ./0-vars
 
-LSUPDATER="$FIRMWARESHELL/LinkStation_FW$VERSIONDOT/LSUpdater.ini"
+LSUPDATER="$HDDROOTFSPATH/LSUpdater.ini"
 
 echo $0 running...
 sed -i 's/VersionCheck = 1/VersionCheck = 0/' $LSUPDATER

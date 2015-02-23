@@ -1,5 +1,7 @@
 #!/bin/sh
 
+. ./0-vars
+
 if [ $# -eq 2 ]; then
 	echo "Two command-line parameters found. Assuming production build."
 else
@@ -14,6 +16,7 @@ fi
 
 sh 1-createsrc
 sh 2-hackupdater
+if [ $LINKSTATION -eq 1 ]; then
 if [ $# -eq 3 ]; then
 	sh 3-dev
 fi
@@ -28,4 +31,10 @@ sh B-nfs
 sh C-ssh
 sh D-autoupdate
 sh E-shortcuts
+else
+#CloudStation
+sh 5-addplexbinary
+sh C-ssh
+fi
 sh Z-compile $1 $2
+

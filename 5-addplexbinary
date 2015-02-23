@@ -39,6 +39,10 @@ cp $SRC/usr/local/bin/rsync $SRC/usr/local/plexroot/usr/bin/
 
 tar -xzf $RESOURCES/additions/binaries.tgz -C $SRC
 
+if [ $LINKSTATION -ne 1 ]; then
+sed -i "s/\$plexserver/on/" $SRC/etc/init.d/plex.sh
+fi
+
 #/root/.files/initfile.tar.gz - extract, add /etc/melco/plexserver, compress
 if [ -f $SRC/etc/melco/plexserver ]; then
     echo "  Untarring initfile.tar.gz to add plexserver"

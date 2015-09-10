@@ -1,6 +1,7 @@
 #!/bin/sh
 
 TRANSMISSION_VERSION=2.84
+OPENSSL_VERSION=0.9.8ze
 
 #umount /opt 2> /dev/null
 #rm -rf /mnt/array1/.optware
@@ -28,6 +29,8 @@ cd cs08q1armel
 make directories toolchain ipkg-utils
 sed -i "s/^TRANSMISSION_VERSION=.*\$/TRANSMISSION_VERSION=$TRANSMISSION_VERSION/" ./make/transmission.mk
 sed -i "s/^TRANSMISSION_UNZIP=.*\$/TRANSMISSION_UNZIP=\/opt\/bin\/xzcat/" ./make/transmission.mk
+#Fortunately a different version of openssl is not necessary yet
+#sed -i "s/^export OPENSSL_VERSION = .*\$/export OPENSSL_VERSION = $OPENSSL_VERSION/" ./make/openssl.mk
 #make openssl
 #make zlib
 #make libcurl
@@ -37,3 +40,29 @@ make transmission
 #Fix libcurl compiler error which I couldn't track properly yet...
 sed -i 's/^URL:\(.*\)$/#URL:\1/' /root/compiler/svn-cs08q1armel/cs08q1armel/staging/opt/lib/pkgconfig/libcurl.pc
 make transmission
+mkdir /root/transmission
+mkdir /root/transmission/bin
+cp builds/transmission/cli/transmission-cli /root/transmission/bin
+cp builds/transmission/utils/transmission-create /root/transmission/bin
+cp builds/transmission/daemon/transmission-daemon /root/transmission/bin
+cp builds/transmission/utils/transmission-edit /root/transmission/bin
+cp builds/transmission/daemon/transmission-remote /root/transmission/bin
+cp builds/transmission/utils/transmission-show /root/transmission/bin
+mkdir /root/transmission/share
+mkdir /root/transmission/share/doc
+mkdir /root/transmission/share/doc/transmission
+cp builds/transmission/COPYING /root/transmission/share/doc/transmission
+cp builds/transmission/ChangeLog /root/transmission/share/doc/transmission
+cp builds/transmission/NEWS /root/transmission/share/doc/transmission
+cp builds/transmission/README /root/transmission/share/doc/transmission
+mkdir /root/transmission/share/man
+mkdir /root/transmission/share/man/man1
+cp builds/transmission/cli/transmission-cli.1 /root/transmission/share/man/man1
+cp builds/transmission/utils/transmission-create.1 /root/transmission/share/man/man1
+cp builds/transmission/daemon/transmission-daemon.1 /root/transmission/share/man/man1
+cp builds/transmission/utils/transmission-edit.1 /root/transmission/share/man/man1
+cp builds/transmission/daemon/transmission-remote.1 /root/transmission/share/man/man1
+cp builds/transmission/utils/transmission-show.1 /root/transmission/share/man/man1
+mkdir /root/transmission/share/transmission
+cp -r builds/transmission/web /root/transmission/share/transmission
+tar -cvzf /root/transmission-${TRANSMISSION_VERSION}.tgz -C /root/transmission bin share

@@ -1,10 +1,12 @@
 # Linkstation firmware (too big)
 ls_series-*.zip
+cloudstor-firmware-build-*.zip
 hddrootfs.img
 hddrootfs.buffalo.updated
 
 # Unzipped firmware (too big)
 resources/ls_series-*
+resources/cloudstor-firmware-build-*
 
 # Plex package (too big)
 firmwares/PlexMediaServer-*

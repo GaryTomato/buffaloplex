@@ -49,21 +49,23 @@ tar -xzf $RESOURCES/additions/transmission.tgz -C $SRC
 
 echo "  Adding Transmission stable"
 mkdir $TRANSMISSIONBASE/stable
-rm -rf $TMPFOLDER
-mkdir $TMPFOLDER
-tar -xf $FIRMWARES/transmission_${TRANSMISSIONSTABLE_VERSION}-1_arm.ipk -C $TMPFOLDER
-tar -xzf $TMPFOLDER/data.tar.gz -C $TMPFOLDER
-cp -r $TMPFOLDER/opt/bin $TRANSMISSIONBASE/stable
-cp -r $TMPFOLDER/opt/share $TRANSMISSIONBASE/stable
+#rm -rf $TMPFOLDER
+#mkdir $TMPFOLDER
+#tar -xf $FIRMWARES/transmission_${TRANSMISSIONSTABLE_VERSION}-1_arm.ipk -C $TMPFOLDER
+#tar -xzf $TMPFOLDER/data.tar.gz -C $TMPFOLDER
+#cp -r $TMPFOLDER/opt/bin $TRANSMISSIONBASE/stable
+#cp -r $TMPFOLDER/opt/share $TRANSMISSIONBASE/stable
+tar -xvzf $FIRMWARES/transmission-${TRANSMISSIONSTABLE_VERSION}.tgz -C $TRANSMISSIONBASE/stable
 
 echo "  Adding transmission latest"
 mkdir $TRANSMISSIONBASE/latest
-rm -rf $TMPFOLDER
-mkdir $TMPFOLDER
-tar -xf $FIRMWARES/transmission_${TRANSMISSIONLATEST_VERSION}-1_arm.ipk -C $TMPFOLDER
-tar -xzf $TMPFOLDER/data.tar.gz -C $TMPFOLDER
-cp -r $TMPFOLDER/opt/bin $TRANSMISSIONBASE/latest
-cp -r $TMPFOLDER/opt/share $TRANSMISSIONBASE/latest
+#rm -rf $TMPFOLDER
+#mkdir $TMPFOLDER
+#tar -xf $FIRMWARES/transmission_${TRANSMISSIONLATEST_VERSION}-1_arm.ipk -C $TMPFOLDER
+#tar -xzf $TMPFOLDER/data.tar.gz -C $TMPFOLDER
+#cp -r $TMPFOLDER/opt/bin $TRANSMISSIONBASE/latest
+#cp -r $TMPFOLDER/opt/share $TRANSMISSIONBASE/latest
+tar -xvzf $FIRMWARES/transmission-${TRANSMISSIONLATEST_VERSION}.tgz -C $TRANSMISSIONBASE/latest
 
 echo "  Modifying web-control skin to include clutch skin"
 mv $TRANSMISSIONBASE/latest/share/transmission/web/index.html $TRANSMISSIONBASE/latest/share/transmission/web/index.original.html

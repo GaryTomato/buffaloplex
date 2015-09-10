@@ -10,14 +10,19 @@ fi
 
 FINALOUTPUTFULL=/media/sf_LinuxShare
 FINALOUTPUTAUTO=/media/sf_LinuxShare/buffaloplex
-FULLFILEUNCOMPRESSED=$FIRMWARESHELL/LinkStation_FW$VERSIONDOT
-AUTOFILE=linkstation_series-$VERSIONDOT-$1.zip
-FW_INFO=$FINALOUTPUTAUTO/fw_info2.xml
+FULLFILEUNCOMPRESSED=$HDDROOTFSPATH
+if [ $LINKSTATION -eq 1 ]; then
+	AUTOFILE=linkstation_series-$VERSIONDOT-$1.zip
+	FW_INFO=$FINALOUTPUTAUTO/fw_info2.xml
+else
+	AUTOFILE=cloudstor-firmware-build-$VERSIONDOT-$SUBVERSION-$1.zip
+	FW_INFO=/dev/null
+fi
 
 echo $0 running...
 
 echo "  Cleaning up old versions"
-rm -f $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/hddrootfs.img
+rm -f $HDDROOTFSPATH/hddrootfs.img
 rm -f $RESOURCES/hddrootfs.buffalo.updated
 
 echo "  Update firmware revision"
@@ -25,10 +30,10 @@ DAT="`date "+%Y/%m/%d %H:%M:%S"`"
 sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1/" $SRC/etc/linkstation_release
 sed -i "s/^SUBVERSION=.*\$/SUBVERSION=HDD $2/" $SRC/etc/linkstation_release
 sed -i "s,^BUILDDATE=.*\$,BUILDDATE=$DAT," $SRC/etc/linkstation_release
-sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1-$2\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
-sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.ini
-sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1-$2\r/" $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
-sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/linkstation_version.txt
+sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1-$2\r/" $HDDROOTFSPATH/linkstation_version.ini
+sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $HDDROOTFSPATH/linkstation_version.ini
+sed -i "s/^VERSION=$VERSIONDOT.*\$/VERSION=$VERSIONDOT-$1-$2\r/" $HDDROOTFSPATH/linkstation_version.txt
+sed -i "s,^ROOTFS=.*\$,ROOTFS=$DAT\r," $HDDROOTFSPATH/linkstation_version.txt
 
 echo "  Compressing hddrootfs.buffalo.updated"
 tar -C $SRC -cf $RESOURCES/hddrootfs.buffalo.updated.tar .
@@ -36,19 +41,37 @@ gzip -9 $RESOURCES/hddrootfs.buffalo.updated.tar
 mv $RESOURCES/hddrootfs.buffalo.updated.tar.gz $RESOURCES/hddrootfs.buffalo.updated
 
 echo "  Encrypting to hddrootfs.img"
-zip -9 -q -j -e $FIRMWARESHELL/LinkStation_FW$VERSIONDOT/hddrootfs.img $RESOURCES/hddrootfs.buffalo.updated -P "`cat $RESOURCES/password$VERSION`"
+zip -9 -q -j -e $HDDROOTFSPATH/hddrootfs.img $RESOURCES/hddrootfs.buffalo.updated -P "`cat $RESOURCES/password$VERSION`"
 
 echo "  Copying hddrootfs.buffalo.updated to autoupdate folder and preparing other autoupdate files"
 rm -rf $TMPFOLDER
 mkdir $TMPFOLDER
-#unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/password$VERSION`" $FULLFILEUNCOMPRESSED/hddrootfs.img
-cp $RESOURCES/hddrootfs.buffalo.updated $TMPFOLDER
-unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/initrd$VERSION`" $FULLFILEUNCOMPRESSED/initrd.img
-unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/u-boot$VERSION`" $FULLFILEUNCOMPRESSED/u-boot.img
-unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/uimage$VERSION`" $FULLFILEUNCOMPRESSED/uImage.img
+if [ $LINKSTATION -eq 1 ]; then
+	#unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/password$VERSION`" $FULLFILEUNCOMPRESSED/hddrootfs.img
+	cp $RESOURCES/hddrootfs.buffalo.updated $TMPFOLDER
+	unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/initrd$VERSION`" $FULLFILEUNCOMPRESSED/initrd.img
+	unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/u-boot$VERSION`" $FULLFILEUNCOMPRESSED/u-boot.img
+	unzip -q -o -d $TMPFOLDER -P "`cat $RESOURCES/uimage$VERSION`" $FULLFILEUNCOMPRESSED/uImage.img
+fi
 
 echo "  Clean up hddrootfs.buffalo.updated"
 rm -f $RESOURCES/hddrootfs.buffalo.updated
+
+if [ $LINKSTATION -ne 1 ]; then
+	echo "  Creating full firmware zip cloudstor-firmware-build-$VERSIONDOT-$SUBVERSION-$1.zip"
+	cd $FIRMWARESHELL
+	zip -q -r ../cloudstor-firmware-build-$VERSIONDOT-$SUBVERSION-$1.zip .
+	cd $FIRMWARESHELLBACKOUT
+	if [ -d "$FINALOUTPUTFULL" ]; then
+        	echo "  Moving full firmware to final place at $FINALOUTPUTFULL"
+        	mv $RESOURCES/cloudstor-firmware-build-$VERSIONDOT-$SUBVERSION-$1.zip $FINALOUTPUTFULL
+	else
+        	echo "**$FINALOUTPUTFULL does not exist, keeping firmware at $RESOURCES/cloudstor-firmware-build-$VERSIONDOT-$SUBVERSION-$1.zip"
+        	echo "**Consider settings \$FINALOUTPUTFULL in $0"
+	fi
+	echo "DONE cloudstor-firmware-build-$VERSIONDOT-$SUBVERSION-$1.zip"
+	exit
+fi
 
 echo "  Create autoupdate file $AUTOFILE"
 cd $TMPFOLDER

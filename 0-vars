@@ -1,12 +1,23 @@
 #!/bin/sh
 
-VERSION=169
+#Testing CloudStation
+#LINKSTATION=1 means the build is for the LinkStation
+#LINKSTATION=0 means the build is for the CloudStation
+LINKSTATION=1
+
+if [ $LINKSTATION -eq 1 ]; then
+	VERSION=171
+else
+	VERSION=113
+	SUBVERSION=2.35
+fi
 
 #PLEXBIN=PlexMediaServer-0.9.9.14.531-7eef8c6-arm.spk
 #PLEXBIN=PlexMediaServer-0.9.10.1.585-f31034e-arm.spk
 #PLEXBIN=PlexMediaServer-0.9.11.1.678-c48ffd2-arm.spk
 #PLEXBIN=PlexMediaServer-0.9.11.4.739-a4e710f-arm.spk
-PLEXBIN=PlexMediaServer-0.9.11.7.803-87d0708-arm.spk
+#PLEXBIN=PlexMediaServer-0.9.11.7.803-87d0708-arm.spk
+PLEXBIN=PlexMediaServer-0.9.12.11.1406-8403350-arm.spk
 
 PLEX_GCC=gcc-4.7-base_4.7.2-5_armel.deb
 PLEX_LIBC=libc6_2.13-38+deb7u6_armel.deb
@@ -17,7 +28,16 @@ SRC=./src
 FIRMWARES=./firmwares
 RESOURCES=./resources
 VERSIONDOT="${VERSION:0:1}.${VERSION:1}"
-FIRMWARESHELL="$RESOURCES/ls_series-$VERSION"
+if [ $LINKSTATION -eq 1 ]; then
+	FIRMWARESHELL="$RESOURCES/ls_series-$VERSION"
+	FIRMWAREZIP="$FIRMWARES/ls_series-$VERSION.zip"
+	HDDROOTFSPATH="$FIRMWARESHELL/LinkStation_FW$VERSIONDOT"
+else
+	FIRMWARESHELL="$RESOURCES/cloudstor-firmware-build-$VERSIONDOT-$SUBVERSION"
+	FIRMWAREZIP="$FIRMWARES/cloudstor-firmware-build-$VERSIONDOT-$SUBVERSION.zip"
+	HDDROOTFSPATH="$FIRMWARESHELL"
+fi
+FIRMWARESBACKOUT=".."
 FIRMWARESHELLBACKOUT="../.."
 TMPFOLDER=./tmp-compile
 TMPFOLDERBACKOUT=".."
@@ -30,10 +50,11 @@ TRANSMISSIONLATEST_VERSION=2.84
 
 OLDWIN=nasnavi-266.exe
 OLDOSX=nasnavi-266.dmg.zip
-NASNAVIWIN=$FIRMWARES/nasnavi-278.zip
-NASNAVIOSX=$FIRMWARES/nasnavi-279.dmg.zip
+NASNAVIWIN=$FIRMWARES/nasnavi-282.zip
+NASNAVIOSX=$FIRMWARES/nasnavi-282.dmg.zip
 
-FLEXGETVERSION=1.2.249-notest
+#FLEXGETVERSION=1.2.271
+FLEXGETVERSION=1.2.349
 
 rm -rf $TMPFOLDER 2> /dev/null
 mkdir $TMPFOLDER

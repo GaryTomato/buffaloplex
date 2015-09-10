@@ -1,3 +1,5 @@
 #!/bin/sh
-wget http://buffalotech.com/support-and-downloads/download/nasnavi-278.zip
-wget http://buffalotech.com/support-and-downloads/download/nasnavi-279.dmg.zip
+#wget http://buffalotech.com/support-and-downloads/download/nasnavi-278.zip
+#wget http://buffalotech.com/support-and-downloads/download/nasnavi-279.dmg.zip
+wget http://www.buffalotech.com/support-and-downloads/download/nasnavi-282.zip
+wget http://www.buffalotech.com/support-and-downloads/download/nasnavi-282.dmg.zip

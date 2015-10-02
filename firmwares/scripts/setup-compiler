@@ -2,11 +2,13 @@
 
 TRANSMISSION_VERSION=2.84
 OPENSSL_VERSION=0.9.8ze
+ZLIB_VERSION=1.2.3
+LIBCURL_VERSION=7.19.6
 
 #umount /opt 2> /dev/null
 #rm -rf /mnt/array1/.optware
 ln -s /mnt/array1 /mnt/disk1
-cd /root
+cd /root/optware-setup
 echo "You need to manually exit the sub-shell after optware is installed."
 sh ls-mvkw-bootstrap_1.2-7_arm.xsh
 rm /mnt/disk1
@@ -29,8 +31,10 @@ cd cs08q1armel
 make directories toolchain ipkg-utils
 sed -i "s/^TRANSMISSION_VERSION=.*\$/TRANSMISSION_VERSION=$TRANSMISSION_VERSION/" ./make/transmission.mk
 sed -i "s/^TRANSMISSION_UNZIP=.*\$/TRANSMISSION_UNZIP=\/opt\/bin\/xzcat/" ./make/transmission.mk
-#Fortunately a different version of openssl is not necessary yet
-#sed -i "s/^export OPENSSL_VERSION = .*\$/export OPENSSL_VERSION = $OPENSSL_VERSION/" ./make/openssl.mk
+sed -i "s/^export OPENSSL_VERSION = .*\$/export OPENSSL_VERSION = $OPENSSL_VERSION/" ./make/openssl.mk
+sed -i "s/^ZLIB_VERSION:=.*\$/ZLIB_VERSION:=$ZLIB_VERSION/" ./make/zlib.mk
+sed -i "s/^ZLIB_LIB_VERSION:=.*\$/ZLIB_LIB_VERSION:=$ZLIB_VERSION/" ./make/zlib.mk
+sed -i "s/^LIBCURL_VERSION=.*\$/LIBCURL_VERSION=$LIBCURL_VERSION/" ./make/libcurl.mk
 #make openssl
 #make zlib
 #make libcurl

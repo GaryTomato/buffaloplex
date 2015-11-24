@@ -49,7 +49,7 @@ if [ $# -eq 1 ]; then
 	echo "Predefined Plex file detected."
 else
 	echo "Trying to find latest Plex Media Server."
-	wget https://plex.tv/downloads/1/archive -O $TMPPATH/plexversions
+	wget --no-check-certificate https://plex.tv/downloads/1/archive -O $TMPPATH/plexversions
 	if [ $? -eq 0 ]; then
 		echo "Successfully downloaded list of Plex versions."
 		TMPVERSION=`grep "href=\"https://downloads.plex.tv/plex-media-server/[^\"]*-arm\.spk\".*data-event-label=\"arm5x\".*data-metric-custom2=\"Synology\"" $TMPPATH/plexversions | sed 's,.*href=\"https://downloads.plex.tv/plex-media-server/\([^\"]*\)-arm\.spk\".*data-event-label=\"arm5x\".*data-metric-custom2=\"Synology\".*,\1,' | head -1`
@@ -67,7 +67,7 @@ echo "Filename:	$PLEXBIN"
 echo "Temporary directory: $TMPPATH"
 
 echo "Downloading $PLEXBIN."
-wget $PLEXFILE -O $TMPPATH/$PLEXBIN
+wget --no-check-certificate $PLEXFILE -O $TMPPATH/$PLEXBIN
 if [ $? -ne 0 ]; then
 	echo "Download of Plex Media Server ($PLEXBIN) failed."
 	exit

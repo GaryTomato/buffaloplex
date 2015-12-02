@@ -10,7 +10,7 @@ tar -xzf $RESOURCES/additions/webcode.tgz -C $SRC
 
 echo "  Adding custom strings to all language"
 OLDIFS=$IFS
-while IFS='';read -r LINE || [[ -n "$LINE" ]]
+while IFS='';read -r LINE || [ -n "$LINE" ]
 do
 	IFS=$OLDIFS
 	MSG=`echo "$LINE" | sed 's/^.*id: \("[^"]*"\).*$/\1/'`

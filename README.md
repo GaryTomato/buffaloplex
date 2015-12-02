@@ -9,6 +9,7 @@ The build script also checks if the files are available and downloads them as ne
 How to use it?
 
 This bunch of scripts create a full custom firmware for the Buffalo Linkstation from scratch, provided that all the necessary files of the project are in place. Download or clone the files to an up-to-date linux machine (I used CentOS 7) and create your first full build by running buildnewrelease with the below supplied parameters. (For a quick start, jump to buildnewrelease and read that paragraph.)
+The CentOS 7 base build contained all necessary programs to run these files. The latest version is also Ubuntu compatible but you need to install some dependencies: apt-get install binutils zip
 
 Directory: firmwares
 

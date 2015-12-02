@@ -8,8 +8,6 @@ fi
 
 . ./0-vars
 
-FINALOUTPUTFULL=/media/sf_LinuxShare
-FINALOUTPUTAUTO=/media/sf_LinuxShare/buffaloplex
 FULLFILEUNCOMPRESSED=$HDDROOTFSPATH
 if [ $LINKSTATION -eq 1 ]; then
 	AUTOFILE=linkstation_series-$VERSIONDOT-$1.zip

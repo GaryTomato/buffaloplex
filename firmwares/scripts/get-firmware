@@ -1,4 +1,4 @@
 #!/bin/sh
-#wget http://buffalotech.com/support-and-downloads/download/ls_series-169.zip
 wget http://www.buffalotech.com/support-and-downloads/download/cloudstor-firmware-build-1.13-2.35.zip
+wget http://buffalotech.com/support-and-downloads/download/ls_series-169.zip
 wget http://www.buffalotech.com/support-and-downloads/download/ls_series-171.zip

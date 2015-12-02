@@ -49,23 +49,33 @@ tar -xzf $RESOURCES/additions/transmission.tgz -C $SRC
 
 echo "  Adding Transmission stable"
 mkdir $TRANSMISSIONBASE/stable
-#rm -rf $TMPFOLDER
-#mkdir $TMPFOLDER
-#tar -xf $FIRMWARES/transmission_${TRANSMISSIONSTABLE_VERSION}-1_arm.ipk -C $TMPFOLDER
-#tar -xzf $TMPFOLDER/data.tar.gz -C $TMPFOLDER
-#cp -r $TMPFOLDER/opt/bin $TRANSMISSIONBASE/stable
-#cp -r $TMPFOLDER/opt/share $TRANSMISSIONBASE/stable
-tar -xvzf $FIRMWARES/transmission-${TRANSMISSIONSTABLE_VERSION}.tgz -C $TRANSMISSIONBASE/stable
+if [ $TRANSMISSIONCOMPILED -eq 1 ]; then
+	echo "    Compiled version"
+	tar -xzf $FIRMWARES/transmission-${TRANSMISSIONSTABLE_VERSION}.tgz -C $TRANSMISSIONBASE/stable
+else
+	echo "    Optware version"
+	rm -rf $TMPFOLDER
+	mkdir $TMPFOLDER
+	tar -xf $FIRMWARES/transmission_${TRANSMISSIONSTABLE_VERSION}-1_arm.ipk -C $TMPFOLDER
+	tar -xzf $TMPFOLDER/data.tar.gz -C $TMPFOLDER
+	cp -r $TMPFOLDER/opt/bin $TRANSMISSIONBASE/stable
+	cp -r $TMPFOLDER/opt/share $TRANSMISSIONBASE/stable
+fi
 
 echo "  Adding transmission latest"
 mkdir $TRANSMISSIONBASE/latest
-#rm -rf $TMPFOLDER
-#mkdir $TMPFOLDER
-#tar -xf $FIRMWARES/transmission_${TRANSMISSIONLATEST_VERSION}-1_arm.ipk -C $TMPFOLDER
-#tar -xzf $TMPFOLDER/data.tar.gz -C $TMPFOLDER
-#cp -r $TMPFOLDER/opt/bin $TRANSMISSIONBASE/latest
-#cp -r $TMPFOLDER/opt/share $TRANSMISSIONBASE/latest
-tar -xvzf $FIRMWARES/transmission-${TRANSMISSIONLATEST_VERSION}.tgz -C $TRANSMISSIONBASE/latest
+if [ $TRANSMISSIONCOMPILED -eq 1 ]; then
+	echo "    Compiled version"
+	tar -xzf $FIRMWARES/transmission-${TRANSMISSIONLATEST_VERSION}.tgz -C $TRANSMISSIONBASE/latest
+else
+	echo "    Optware version"
+	rm -rf $TMPFOLDER
+	mkdir $TMPFOLDER
+	tar -xf $FIRMWARES/transmission_${TRANSMISSIONLATEST_VERSION}-1_arm.ipk -C $TMPFOLDER
+	tar -xzf $TMPFOLDER/data.tar.gz -C $TMPFOLDER
+	cp -r $TMPFOLDER/opt/bin $TRANSMISSIONBASE/latest
+	cp -r $TMPFOLDER/opt/share $TRANSMISSIONBASE/latest
+fi
 
 echo "  Modifying web-control skin to include clutch skin"
 mv $TRANSMISSIONBASE/latest/share/transmission/web/index.html $TRANSMISSIONBASE/latest/share/transmission/web/index.original.html

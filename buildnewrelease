@@ -25,7 +25,7 @@ sh 5-addplexbinary
 sh 6-addwebinterface
 sh 7-changeutorrentweb
 sh 8-addtransmission
-sh 9-updatenasnavi
+bash 9-updatenasnavi
 sh A-advancedpower
 sh B-nfs
 sh C-ssh

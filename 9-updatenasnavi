@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+#Keep using bash in this script. dash in Ubuntu doesn't deal with arrays the same way.
 #Update NasNavi from 2.66 to 2.78/2.79 (Windows/OSX)
 
 . ./0-vars

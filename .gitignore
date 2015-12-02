@@ -15,3 +15,4 @@ firmwares/PlexMediaServer-*
 src/*
 old-src/*
 tmp-compile/*
+compiled/*

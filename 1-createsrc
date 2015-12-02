@@ -43,6 +43,11 @@ if [ ! -f $FIRMWARES/$PLEXBIN ]; then
 	fi
 fi
 
+if [ "x`whoami`" != "xroot" ]; then
+	echo "You need to be root to properly unzip the firmware. (Special files need special privileges.)"
+	exit
+fi
+
 [ -d $FIRMWARESHELL ] && rm -rf $FIRMWARESHELL
 echo "  Unzipping $FIRMWAREZIP"
 if [ $LINKSTATION -eq 1 ]; then

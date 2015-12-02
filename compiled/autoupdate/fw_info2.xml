@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE nasUpdateInfo [
+	<!ELEMENT nasUpdateInfo (checkURL?, termsAndConditions?, updates?)>
+	<!ELEMENT checkURL (#PCDATA)>
+	<!ELEMENT termsAndConditions (#PCDATA)>
+	<!ELEMENT updates (update+)>
+	<!ELEMENT update (type, productId?, version, downloadinfo+, region+)>
+	<!ELEMENT type (#PCDATA)>
+	<!ELEMENT productId (#PCDATA)>
+	<!ELEMENT version (#PCDATA)>
+	<!ELEMENT downloadinfo (size, checksum?, binary_url)>
+	<!ELEMENT size (#PCDATA)>
+	<!ELEMENT checksum (#PCDATA)>
+	<!ELEMENT binary_url (#PCDATA)>
+	<!ELEMENT binary_url_executable (#PCDATA)>
+	<!ELEMENT region (name, description, release_note?)>
+	<!ELEMENT name (#PCDATA)>
+	<!ELEMENT description (#PCDATA)>
+	<!ELEMENT release_note (#PCDATA)>
+	<!ELEMENT firmup_file (#PCDATA)>
+	<!ELEMENT license_url (#PCDATA)>
+	<!ATTLIST version type CDATA #IMPLIED>
+	<!ATTLIST downloadinfo type CDATA #IMPLIED>
+	<!ATTLIST region value CDATA #IMPLIED>
+	<!ATTLIST checksum type CDATA #REQUIRED>
+]>
+<nasUpdateInfo>
+	<checkURL/>
+	<termsAndConditions/>
+	<updates>
+        <update id="1">
+            <type>
+                Firmware
+            </type>
+            <productId>
+                0x00000000,0x00000011,0x00000012,0x00000013,0x00000014,0x00003006,0x00003007,0x00000015,0x00000016,0x00003008,0x00004001,0x00000017,0x00000019
+            </productId>
+            <version type="available">
+                1.69-Peace
+            </version>
+            <downloadinfo type="online_update">
+                <size>
+                    462723558
+                </size>
+                <checksum type="md5sum">
+                    0387f7075a9882b358b19afb5c840b03
+                </checksum>
+                <binary_url>
+                    https://www.dropbox.com/s/4xttwqg2qfp554u/linkstation_series-1.71-Halloween.zip?dl=1
+                </binary_url>
+            </downloadinfo>
+            <region value="default">
+                <name>
+                    LinkStation Series Firmware Updater Ver.1.71 Heiwa
+                </name>
+                <description>
+                    Firmware Updater for LinkStation Series.
+                </description>
+                <release_note>
+                    https://www.dropbox.com/s/0sq5fqckm3olnbo/linkstation_series_1.71-3.66-Halloween.txt?dl=1
+                </release_note>
+                <license_url/>
+            </region>
+        </update>
+	</updates>
+</nasUpdateInfo>

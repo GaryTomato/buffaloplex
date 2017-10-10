@@ -49,10 +49,6 @@ This is an optionally run script that will copy every file from the resources/ad
 
 This adds optware awareness to the firmware. If optware was installed before the firmware upgrade, it will keep the dependencies at boot after the upgrade. It also copies optware bootstrap files to /root/optware-bootstrap so if optware was not installed yet, you have an easy start.
 
-5-addplexbinary
-
-This installs the chroot environment and Plex binaries for the firmware. It also updates the web interface so Plex can be configured.
-
 6-addwebinterface
 
 This installs additional settings like the Advanced Power Management piece for storage and the binary for the _auto_load script for BitTorrent.

@@ -21,7 +21,6 @@ if [ $# -eq 3 ]; then
 	sh 3-dev
 fi
 sh 4-optware
-sh 5-addplexbinary
 sh 6-addwebinterface
 sh 7-changeutorrentweb
 sh 8-addtransmission
@@ -33,7 +32,6 @@ sh D-autoupdate
 sh E-shortcuts
 else
 #CloudStation
-sh 5-addplexbinary
 sh C-ssh
 fi
 sh Z-compile $1 $2

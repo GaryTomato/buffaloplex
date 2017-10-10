@@ -1,5 +1,5 @@
 #!/bin/sh
-#Let's dig into the source and add APM support and Plex support for the web interface (and the binary)
+#Let's dig into the source and add APM support for the web interface (and the binary)
 
 . ./0-vars
 
